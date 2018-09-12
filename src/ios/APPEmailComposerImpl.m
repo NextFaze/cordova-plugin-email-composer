@@ -118,7 +118,10 @@
     NSArray* attachments  = [props objectForKey:@"attachments"];
 
     NSCharacterSet* cs    = [NSCharacterSet URLHostAllowedCharacterSet];
-
+    NSMutableCharacterSet *bodyCs = [NSMutableCharacterSet characterSetWithCharactersInString:@"&"];
+    [bodyCs formUnionWithCharacterSet:cs];
+    
+    
     if (![mailto containsString:@"://"]) {
         mailto = [mailto stringByAppendingString:@"://"];
     }
@@ -145,7 +148,7 @@
 
     if (body.length > 0) {
         [parts addObject: [NSString stringWithFormat: @"body=%@",
-                           [body stringByAddingPercentEncodingWithAllowedCharacters:cs]]];
+                           [[body stringByAddingPercentEncodingWithAllowedCharacters:bodyCs] stringByReplacingOccurrencesOfString:@"&" withString:@"%26"]]];
     }
 
     if (attachments.count > 0) {
